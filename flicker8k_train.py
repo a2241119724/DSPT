@@ -37,7 +37,7 @@ if __name__ == '__main__':
     parser.add_argument('--enc_N', type=int, default=6)
     parser.add_argument('--dec_N', type=int, default=6)
     parser.add_argument('--head', type=int, default=4)
-    parser.add_argument('--resume_last', action='store_true', default=False)
+    parser.add_argument('--resume', action='store_true', default=False)
     parser.add_argument('--d_model', type=int, default=512)
     parser.add_argument('--features_path', type=str, default='../flicker8k.hdf5')
     parser.add_argument('--caption_path', type=str, default='./annotations/flicker8k_captions.json')
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     start_epoch = 0
 
     fname = 'saved_models/%s.pth' % args.exp_name
-    if args.resume_last or args.only_test:
+    if args.resume or args.only_test:
         if os.path.exists(fname):
             data = torch.load(fname)
             torch.set_rng_state(data['torch_rng_state'])
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     loss_fn = poly_loss
     print("Training starts")
     for e in range(start_epoch, start_epoch + 100):
-        if e == 21:
+        if e >= 21:
             use_rl = True
             data = torch.load(fname)
             model.load_state_dict(data['state_dict'], strict=True)
