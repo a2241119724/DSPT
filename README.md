@@ -13,31 +13,36 @@ To run the code, annotations, evaluation tools and visual features for the COCO 
 
 Preprocessing of the Flicker Dataset in the Flicker_util. py File.
 ## Training
-For example, to train our model with the parameters used in our experiments, use
+Train a model using the **MSCOCO** dataset. Run the following command:
 ``` sh
 python train.py --exp_name DSPT --device cuda:0 --features_path ../swin_feature.hdf5 --batch_size 50 --rl_batch_size 50
 ```
-If it shows "out of graphics memory" after running, reduce the batch_size.
+Train a model using the **Flicker8k** dataset. Run the following command:
 ``` sh
 python flicker8k_train.py --exp_name flicker8k --features_path ../flicker8k.hdf5 --device cuda:0 --batch_size 25 --rl_batch_size 25
 ```
+Train a model using the **Flicker30k** dataset. Run the following command:
 ``` sh
 python flicker30k_train.py --exp_name flicker30k --features_path ../flicker30k.hdf5 --device cuda:0 --batch_size 25 --rl_batch_size 25
 ```
+If it shows "out of graphics memory" after running, reduce the batch_size and rl_batch_size.
 ## Evaluation
 To reproduce the results reported in our paper, download the pretrained model file [pth](https://pan.baidu.com/s/1Au97sw12o7UdrEZN_QRzBg). Acess code: labl.
-Run the following command:
+
+Evaluation a model using the **MSCOCO** dataset. Run the following command:
 ``` sh
-python test.py --exp_name mscoco --features_path ../lab_X101.hdf5 --device cuda:0
+python test.py --exp_name DSPT --features_path ../lab_X101.hdf5 --device cuda:0
 ```
+Evaluation a model using the **Flicker8k** dataset. Run the following command:
 ``` sh
 python flicker8k_train.py --exp_name flicker8k --features_path ../flicker8k.hdf5 --device cuda:0 --only_test
 ```
+Evaluation a model using the **Flicker30k** dataset. Run the following command:
 ``` sh
 python flicker30k_train.py --exp_name flicker30k --features_path ../flicker30k.hdf5 --device cuda:0 --only_test
 ```
 #### **Ensemble model**
-It will search for and perform Averaging Ensemble on the features from all *_best_test.pth files located in the --pth_path folder.You can modify the **TransformerEnsemble** in /models/transformer/transformer.py to implement other types of ensemble methods.
+It will search for and perform **Averaging Ensemble** on the features from all *_best_test.pth files located in the --pth_path folder.You can modify the **TransformerEnsemble** in /models/transformer/transformer.py to implement other types of ensemble methods.
 ``` sh
 python test.py --is_ensemble
 ```
