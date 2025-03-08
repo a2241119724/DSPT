@@ -1,8 +1,8 @@
-saved_models/*
+/saved_models/*
 /output/*
-tensorboard_logs/*
-annotations/
-evaluation/
+/tensorboard_logs/*
+/annotations
+/evaluation
 !/**/.gitkeep
 **/__pycache__/
 *.pkl
