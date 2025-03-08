@@ -104,9 +104,9 @@ class ImageField(RawField):
         self.f_region = h5py.File(self.feature_path, 'r')
         self.f_grid = self.f_region
         try:
-            self.grid_count = self.f_grid["1000_grids"][()].shape[0]
+            self.grid_count, self.grid_dim = self.f_grid["1000_grids"][()].shape
         except:
-            self.grid_count = self.f_grid["1000_features"][()].shape[0]
+            self.grid_count, self.grid_dim = self.f_grid["1000_features"][()].shape
         super(ImageField, self).__init__(preprocessing, postprocessing)
 
     def preprocess(self, x, avoid_precomp=False):

@@ -163,7 +163,7 @@ if __name__ == '__main__':
     parser.add_argument('--dec_N', type=int, default=6)
     parser.add_argument('--head', type=int, default=4)
     parser.add_argument('--is_rl', action='store_true', default=False)
-    parser.add_argument('--no_last', action='store_false', default=True)
+    parser.add_argument('--resume_last', action='store_true', default=False)
     parser.add_argument('--resume_best', action='store_true', default=False)
     parser.add_argument('--d_model', type=int, default=512)
     parser.add_argument('--xe_least', type=int, default=20)
@@ -174,7 +174,6 @@ if __name__ == '__main__':
     parser.add_argument('--annotation_folder', type=str, default='./annotations')
     parser.add_argument('--logs_folder', type=str, default='tensorboard_logs')
     parser.add_argument('--xe_base_lr', type=float, default=0.0001)
-    parser.add_argument('--d_in', type=int, default=2048)
     args = parser.parse_args()
     device = torch.device(args.device)
     print(args)
@@ -202,7 +201,7 @@ if __name__ == '__main__':
 
     # Model and dataloaders
     d_qkv = int(args.d_model // args.head)
-    encoder = Encoder(args.enc_N, d_k=d_qkv, d_v=d_qkv, h=args.head, d_in=args.d_in, d_model=args.d_model, grid_count=image_field.grid_count)
+    encoder = Encoder(args.enc_N, d_k=d_qkv, d_v=d_qkv, h=args.head, d_in=image_field.grid_dim, d_model=args.d_model, grid_count=image_field.grid_count)
     decoder = Decoder(len(text_field.vocab), 54, args.dec_N, text_field.vocab.stoi['<pad>'], d_k=d_qkv, d_v=d_qkv, h=args.head, d_model=args.d_model)
     model = Transformer(text_field.vocab.stoi['<bos>'], encoder, decoder).to(device)
     print_parameter_count(model,is_simplify=True, is_print_all=False,is_print_detail=False, contain_str="decoder")
@@ -242,8 +241,8 @@ if __name__ == '__main__':
     patience = 0
     start_epoch = 0
 
-    if args.resume_best or not args.no_last:
-        if not args.no_last:
+    if args.resume_best or args.resume_last:
+        if args.resume_last:
             fname = 'saved_models/%s_last.pth' % args.exp_name
         else:
             fname = 'saved_models/%s_best.pth' % args.exp_name

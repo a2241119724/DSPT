@@ -71,7 +71,6 @@ if __name__ == '__main__':
     parser.add_argument('--dump_json', type=str, default='gen_res.json')
     parser.add_argument('--is_ensemble', action='store_true', default=False)
     parser.add_argument('--pth_path', type=str, default="./saved_models/")
-    parser.add_argument('--d_in', type=int, default=2048)
     args = parser.parse_args()
 
     print('Transformer Evaluation')
@@ -93,7 +92,7 @@ if __name__ == '__main__':
 
     # Model and dataloaders
     d_qkv = int(args.d_model // args.head)
-    encoder = Encoder(args.enc_N, d_k=d_qkv, d_v=d_qkv, h=args.head, d_in=args.d_in, d_model=args.d_model)
+    encoder = Encoder(args.enc_N, d_k=d_qkv, d_v=d_qkv, h=args.head, d_in=image_field.grid_dim, d_model=args.d_model, grid_count=image_field.grid_count)
     decoder = Decoder(len(text_field.vocab), 54, args.dec_N, text_field.vocab.stoi['<pad>'], d_k=d_qkv, d_v=d_qkv, h=args.head, d_model=args.d_model)
     model = Transformer(text_field.vocab.stoi['<bos>'], encoder, decoder).to(device)
 

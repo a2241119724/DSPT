@@ -30,27 +30,26 @@ os.environ['PYTHONHASHSEED'] = str(seed)
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Transformer')
     parser.add_argument('--exp_name', type=str, default='DSPT')
-    parser.add_argument('--batch_size', type=int, default=50)
-    parser.add_argument('--rl_batch_size', type=int, default=20)
+    parser.add_argument('--batch_size', type=int, default=25)
+    parser.add_argument('--rl_batch_size', type=int, default=25)
     parser.add_argument('--workers', type=int, default=8)
     parser.add_argument('--device', type=str, default='cuda:1')
     parser.add_argument('--enc_N', type=int, default=6)
     parser.add_argument('--dec_N', type=int, default=6)
     parser.add_argument('--head', type=int, default=4)
-    parser.add_argument('--no_last', action='store_false', default=True)
+    parser.add_argument('--resume_last', action='store_true', default=False)
     parser.add_argument('--d_model', type=int, default=512)
     parser.add_argument('--features_path', type=str, default='../flicker8k.hdf5')
     parser.add_argument('--caption_path', type=str, default='./annotations/flicker8k_captions.json')
     parser.add_argument('--logs_folder', type=str, default='tensorboard_logs')
     parser.add_argument('--xe_base_lr', type=float, default=0.0001)
-    parser.add_argument('--d_in', type=int, default=2048)
     parser.add_argument('--only_test', action='store_true', default=False)
     args = parser.parse_args()
     device = torch.device(args.device)
     dataset = Flickr8kDataset(feature_path=args.features_path,caption_path=args.caption_path)
     vocab = dataset.build_vocab(min_freq=5)
     d_qkv = int(args.d_model // args.head)
-    encoder = Encoder(args.enc_N, d_k=d_qkv, d_v=d_qkv, h=args.head, d_in=args.d_in, d_model=args.d_model, grid_count=dataset.grid_count)
+    encoder = Encoder(args.enc_N, d_k=d_qkv, d_v=d_qkv, h=args.head, d_in=dataset.grid_dim, d_model=args.d_model, grid_count=dataset.grid_count)
     decoder = Decoder(len(vocab), 80, args.dec_N, vocab.stoi['<pad>'], d_k=d_qkv, d_v=d_qkv, h=args.head, d_model=args.d_model)
     model = Transformer(vocab.stoi['<bos>'], encoder, decoder).to(device)
     print_parameter_count(model, is_simplify=True, is_print_all=False,is_print_detail=False, contain_str="decoder")
@@ -82,7 +81,7 @@ if __name__ == '__main__':
     start_epoch = 0
 
     fname = 'saved_models/%s.pth' % args.exp_name
-    if not args.no_last or args.only_test:
+    if args.resume_last or args.only_test:
         if os.path.exists(fname):
             data = torch.load(fname)
             torch.set_rng_state(data['torch_rng_state'])
