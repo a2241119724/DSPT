@@ -1,0 +1,10 @@
+saved_models/
+!saved_models/.gitkeep
+output/
+!output/.gitkeep
+tensorboard_logs/
+!tensorboard_logs/.gitkeep
+annotations/
+evaluation/
+**/__pycache__/
+*.pkl
