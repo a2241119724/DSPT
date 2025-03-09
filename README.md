@@ -1,6 +1,6 @@
 # Dual-Stage Pixel Transformer with Enhanced Visual Context for Image Captioning
 This repository contains the reference code for the paper [null]()
-| Encoder | Architecture | Decoder |
+| DSPA | Arch | EVCA |
 |:---:|:---:|:---:|
 |![](./images/encoder.png)|![](./images/architecture.png)|![](./images/decoder.png)|
 
