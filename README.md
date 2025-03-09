@@ -27,16 +27,20 @@ python flicker30k_train.py --exp_name flicker30k --features_path ../flicker30k.h
 ```
 If it shows "out of graphics memory" after running, reduce the batch_size and rl_batch_size.
 ## Evaluation
-To reproduce the results reported in our paper, download the pretrained model file [pth](https://pan.baidu.com/s/1Au97sw12o7UdrEZN_QRzBg). Acess code: labl.
+To reproduce the results reported in our paper, download the pretrained model file [DSPT_X101.pth](). Acess code: labl.
 
 Evaluation a model using the **MSCOCO** dataset. Run the following command:
 ``` sh
 python test.py --exp_name DSPT --features_path ../lab_X101.hdf5 --device cuda:0
 ```
+To reproduce the results reported in our paper, download the pretrained model file [flicker8k.pth](https://pan.baidu.com/s/1u8wdx3LuQwWt5x2rNh3LUQ). Acess code: labl.
+
 Evaluation a model using the **Flicker8k** dataset. Run the following command:
 ``` sh
 python flicker8k_train.py --exp_name flicker8k --features_path ../flicker8k.hdf5 --device cuda:0 --only_test
 ```
+To reproduce the results reported in our paper, download the pretrained model file [flicker30k.pth](https://pan.baidu.com/s/11RJjSDdYBlRkpmDfyfbR9w). Acess code: labl.
+
 Evaluation a model using the **Flicker30k** dataset. Run the following command:
 ``` sh
 python flicker30k_train.py --exp_name flicker30k --features_path ../flicker30k.hdf5 --device cuda:0 --only_test
