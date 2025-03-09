@@ -13,7 +13,7 @@ sh environment.sh
 ## Data
 To run the code, annotations, evaluation tools and visual features for the COCO dataset are needed.
 - **Annotation**. Download the annotation file [annotations.zip](https://pan.baidu.com/s/1PuNfQnOhkNGNnNyEGxr9rQ). Acess code: labl. Extarct and put it in the project root directory.
-- **Feature**. There's grid feature of MSCOCO dataset that you can download from [DLCT](https://github.com/luo3300612/image-captioning-DLCT), [DIFNet](https://github.com/mrwu-mac/DIFNet), [DLCT](https://github.com/luo3300612/image-captioning-DLCT), or you can download it from [hdf5](https://pan.baidu.com/s/1Au97sw12o7UdrEZN_QRzBg). as I've just made a backup copy. Acess code: labl.
+- **Feature**. There's grid feature of MSCOCO dataset that you can download from [DLCT](https://github.com/luo3300612/image-captioning-DLCT), [DIFNet](https://github.com/mrwu-mac/DIFNet), or you can download it from [hdf5](https://pan.baidu.com/s/1Au97sw12o7UdrEZN_QRzBg). as I've just made a backup copy. Acess code: labl.
 - **Evaluation**. [evaluation.zip](https://pan.baidu.com/s/1rAYvKcQOGkYoUPrTpY2qUQ). Acess code: labl. Extarct and put it in the project root directory.
 
 Preprocessing of the Flicker Dataset in the **flicker_utils.py** File.
@@ -21,7 +21,7 @@ Preprocessing of the Flicker Dataset in the **flicker_utils.py** File.
 ## Training
 Train a model using the **MSCOCO** dataset. Run the following command:
 ``` sh
-python train.py --exp_name DSPT --device cuda:0 --features_path ../swin_feature.hdf5 --batch_size 50 --rl_batch_size 50
+python train.py --exp_name DSPT --device cuda:0 --features_path ../coco_all_align.hdf5 --batch_size 50 --rl_batch_size 50
 ```
 Train a model using the **Flicker8k** dataset. Run the following command:
 ``` sh
@@ -36,7 +36,7 @@ If it shows "out of graphics memory" after running, reduce the batch_size and rl
 ## Evaluation
 To reproduce the results reported in our paper, download the pretrained model file [DSPT_X101.pth](). Acess code: labl. Evaluation a model using the **MSCOCO** dataset. Run the following command:
 ``` sh
-python test.py --exp_name DSPT --features_path ../lab_X101.hdf5 --device cuda:0
+python test.py --exp_name DSPT_X101 --features_path ../coco_all_align.hdf5 --device cuda:0
 ```
 Download the pretrained model file [flicker8k.pth](https://pan.baidu.com/s/1u8wdx3LuQwWt5x2rNh3LUQ). Acess code: labl. Evaluation a model using the **Flicker8k** dataset. Run the following command:
 ``` sh
