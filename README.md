@@ -2,7 +2,7 @@
 This repository contains the reference code for the paper [null]()
 | DSPA | Arch | EVCA |
 |:---:|:---:|:---:|
-|![](./images/encoder.png)|![](./images/architecture.png)|![](./images/decoder.png)|
+|![encoder](./images/encoder.png)|![architecture](./images/architecture.png)|![decoder](./images/decoder.png)|
 
 ## Environment
 Clone the repository and create the DSPT conda environment by executing the following command:
