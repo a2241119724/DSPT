@@ -9,7 +9,7 @@ sh environment.sh
 To run the code, annotations, evaluation tools and visual features for the COCO dataset are needed.
 - **Annotation**. Download the annotation file [annotations.zip](https://pan.baidu.com/s/1PuNfQnOhkNGNnNyEGxr9rQ). Acess code: labl. Extarct and put it in the project root directory.
 - **Feature**. There's a grid feature that you can download from [DLCT](https://github.com/luo3300612/image-captioning-DLCT), or you can download it from [hdf5](https://pan.baidu.com/s/1Au97sw12o7UdrEZN_QRzBg). as I've just made a backup copy. Acess code: labl.
-- **Evaluation**. [evaluation.zip](https://pan.baidu.com/s/1dbgJjCyGhYGdgTOVlp1jcg). Acess code: labl. Extarct and put it in the project root directory.
+- **Evaluation**. [evaluation.zip](https://pan.baidu.com/s/1rAYvKcQOGkYoUPrTpY2qUQ). Acess code: labl. Extarct and put it in the project root directory.
 
 Preprocessing of the Flicker Dataset in the Flicker_util. py File.
 ## Training
