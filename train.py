@@ -153,22 +153,21 @@ def train_scst(model, dataloader, optim, cider, text_field):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Transformer')
+    parser = argparse.ArgumentParser(description='DSPT')
     parser.add_argument('--exp_name', type=str, default='DSPT')
     parser.add_argument('--batch_size', type=int, default=50)
     parser.add_argument('--rl_batch_size', type=int, default=50)
     parser.add_argument('--workers', type=int, default=8)
-    parser.add_argument('--device', type=str, default='cuda:1')
+    parser.add_argument('--device', type=str, default='cuda:0')
+    parser.add_argument('--features_path', type=str, default='../coco_all_align.hdf5')
     parser.add_argument('--enc_N', type=int, default=6)
     parser.add_argument('--dec_N', type=int, default=6)
     parser.add_argument('--head', type=int, default=4)
-    parser.add_argument('--is_rl', action='store_true', default=False)
     parser.add_argument('--resume_last', action='store_true', default=False)
     parser.add_argument('--resume_best', action='store_true', default=False)
     parser.add_argument('--d_model', type=int, default=512)
     parser.add_argument('--xe_least', type=int, default=20)
     parser.add_argument('--xe_most', type=int, default=20)
-    parser.add_argument('--features_path', type=str, default='../coco_all_align.hdf5')
     parser.add_argument('--annotation_folder', type=str, default='./annotations')
     parser.add_argument('--logs_folder', type=str, default='tensorboard_logs')
     parser.add_argument('--xe_base_lr', type=float, default=0.0001)
@@ -257,8 +256,6 @@ if __name__ == '__main__':
             best_test_cider = data['best_test_cider']
             patience = data['patience']
             use_rl = data['use_rl']
-            if args.is_rl:
-                use_rl = True
             optim.load_state_dict(data['optimizer'])
             scheduler.load_state_dict(data['scheduler'])
             print('Resuming from epoch %d, validation loss %f, best cider %f, and best_test_cider %f' % (

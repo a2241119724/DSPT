@@ -12,7 +12,7 @@ sh environment.sh
 
 ## Data
 To run the code, annotations, evaluation tools and visual features for the COCO dataset are needed.
-- **Annotation**. Download the annotation file [annotations.zip](https://pan.baidu.com/s/1PuNfQnOhkNGNnNyEGxr9rQ). Acess code: labl. Extarct and put it in the project root directory.
+- **Annotation**. Download the annotation file [annotations.zip](https://pan.baidu.com/s/1KCGlotCKlZF0FrDB995IzA). Acess code: labl. Extarct and put it in the project root directory.
 - **Feature**. There's grid feature of MSCOCO dataset that you can download from [DLCT](https://github.com/luo3300612/image-captioning-DLCT), [DIFNet](https://github.com/mrwu-mac/DIFNet), or you can download it from [hdf5](https://pan.baidu.com/s/1Au97sw12o7UdrEZN_QRzBg). as I've just made a backup copy. Acess code: labl.
 - **Evaluation**. [evaluation.zip](https://pan.baidu.com/s/1rAYvKcQOGkYoUPrTpY2qUQ). Acess code: labl. Extarct and put it in the project root directory.
 
@@ -36,7 +36,7 @@ If it shows "out of graphics memory" after running, reduce the batch_size and rl
 ## Evaluation
 To reproduce the results reported in our paper, download the pretrained model file [DSPT_X101.pth](). Acess code: labl. Evaluation a model using the **MSCOCO** dataset. Run the following command:
 ``` sh
-python test.py --exp_name DSPT_X101 --features_path ../coco_all_align.hdf5 --device cuda:0
+python test.py --exp_name DSPT_X101 --features_path ../coco_all_align.hdf5 --device cuda:0 --pths DSPT_best_test.pth
 ```
 Download the pretrained model file [flicker8k.pth](https://pan.baidu.com/s/1u8wdx3LuQwWt5x2rNh3LUQ). Acess code: labl. Evaluation a model using the **Flicker8k** dataset. Run the following command:
 ``` sh
@@ -50,12 +50,17 @@ python flicker30k_train.py --exp_name flicker30k --features_path ../flicker30k.h
 #### **Ensemble model**
 It will search for and perform **Averaging Ensemble** on the features from all *_best_test.pth files located in the --pth_path folder. You can modify the **TransformerEnsemble** in /models/transformer/transformer.py to implement other types of ensemble methods.
 ``` sh
-python test.py --is_ensemble
+python test.py --is_ensemble --pths ./saved_models/DSPT_1_best_test.pth ./saved_models/DSPT_2_best_test.pth
 ```
 
 #### **Evaluation of some indicators**
 ``` sh
 python eval.py
+```
+
+#### **Online Test**
+``` sh
+python online_test.py --device cuda:0 --pth ./saved_models/DSPT_X101_best_test.pth
 ```
 
 ## Acknowledgements

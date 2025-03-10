@@ -14,7 +14,7 @@ from evaluation import Cider, PTBTokenizer
 from models.transformer import Transformer, Encoder, Decoder, TransformerEnsemble
 from tqdm import tqdm
 
-def predict_captions(model, dataloader, text_field, cider, args):
+def predict_captions(model, dataloader, text_field, cider, args, split):
     import itertools
     tokenizer_pool = multiprocessing.Pool()
     res = {}
@@ -50,30 +50,28 @@ def predict_captions(model, dataloader, text_field, cider, args):
     gts = evaluation.PTBTokenizer.tokenize(gts)
     gen = evaluation.PTBTokenizer.tokenize(gen)
     scores, _ = evaluation.compute_scores(gts, gen)
-    json.dump(res,open(args.dump_json,'w'))
+    json.dump(res,open(split + args.dump_json,'w'))
     return scores
 
 
 if __name__ == '__main__':
-    device = torch.device('cuda')
-    parser = argparse.ArgumentParser(description='Transformer')
+    parser = argparse.ArgumentParser(description='DSPT')
     parser.add_argument('--batch_size', type=int, default=10)
     parser.add_argument('--workers', type=int, default=8)
     parser.add_argument('--head', type=int, default=4)
     parser.add_argument('--enc_N', type=int, default=6)
     parser.add_argument('--dec_N', type=int, default=6)
     parser.add_argument('--d_model', type=int, default=512)
-    # parser.add_argument('--features_path', type=str, default='../swin_feature.hdf5')
-    # parser.add_argument('--features_path', type=str, default='../X152_trainval.hdf5')
-    parser.add_argument('--features_path', type=str, default='/media/a1002/one/dataset/wyh/dataset/coco_all_align.hdf5')
+    parser.add_argument('--features_path', type=str, default='../coco_all_align.hdf5')
     parser.add_argument('--annotation_folder', type=str, default='./annotations')
     parser.add_argument('--exp_name', type=str, default='DSPT')
     parser.add_argument('--dump_json', type=str, default='gen_res.json')
     parser.add_argument('--is_ensemble', action='store_true', default=False)
-    parser.add_argument('--pth_path', type=str, default="./saved_models/")
+    parser.add_argument('--device', type=str, default='cuda:0')
+    parser.add_argument('--pths', nargs='+', default=['./saved_models/lab_X101_11e-8_best_test.pth', './saved_models/lab_X101_12e-8_best_test.pth'])
     args = parser.parse_args()
-
-    print('Transformer Evaluation')
+    device = torch.device(args.device)
+    print('Test Evaluation')
 
     # Pipeline for image regions
     image_field = ImageField(feature_path=args.features_path, max_detections=0, load_in_tmp=False)
@@ -84,7 +82,7 @@ if __name__ == '__main__':
 
     # Create the dataset
     dataset = COCO(image_field, text_field, 'coco/images/', args.annotation_folder, args.annotation_folder)
-    _, _, test_dataset = dataset.splits
+    _, val_dataset, test_dataset = dataset.splits
     text_field.vocab = pickle.load(open('vocab.pkl', 'rb'))
 
     ref_caps_test = list(test_dataset.text)
@@ -95,19 +93,19 @@ if __name__ == '__main__':
     encoder = Encoder(args.enc_N, d_k=d_qkv, d_v=d_qkv, h=args.head, d_in=image_field.grid_dim, d_model=args.d_model, grid_count=image_field.grid_count)
     decoder = Decoder(len(text_field.vocab), 54, args.dec_N, text_field.vocab.stoi['<pad>'], d_k=d_qkv, d_v=d_qkv, h=args.head, d_model=args.d_model)
     model = Transformer(text_field.vocab.stoi['<bos>'], encoder, decoder).to(device)
-
-    pths = []
-    for filename in os.listdir(args.pth_path):
-        if '_best_test.pth' in filename:
-            pths.append(args.pth_path + filename)
+    model.eval()
 
     if not args.is_ensemble:
-        data = torch.load(pths[0])
+        data = torch.load(args.pths[0], map_location=device)
         model.load_state_dict(data['state_dict'])
     else:
-        model = TransformerEnsemble(model=model, weight_files=pths)
+        model = TransformerEnsemble(model=model, weight_files=args.pths, device=device)
 
+    dict_dataset_val = val_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     dict_dataset_test = test_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     dict_dataloader_test = DataLoader(dict_dataset_test, batch_size=args.batch_size, num_workers=args.workers)
-    scores = predict_captions(model, dict_dataloader_test, text_field, cider_test, args)
+    dict_dataloader_val = DataLoader(dict_dataset_val, batch_size=args.batch_size, num_workers=args.workers)
+    scores = predict_captions(model, dict_dataloader_val, text_field, cider_test, args, 'val')
+    print(scores)
+    scores = predict_captions(model, dict_dataloader_test, text_field, cider_test, args, 'test')
     print(scores)
