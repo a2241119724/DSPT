@@ -1,5 +1,3 @@
-import random
-import os
 import evaluation
 import torch
 import argparse
@@ -7,18 +5,20 @@ import pickle
 import numpy as np
 import json
 import multiprocessing
+import itertools
 
+from PIL import Image
 from data import ImageField, TextField, RawField
 from data import COCO, DataLoader
 from evaluation import Cider, PTBTokenizer
 from models.transformer import Transformer, Encoder, Decoder, TransformerEnsemble
 from tqdm import tqdm
+from torchvision import transforms
+from torchvision import models
 
 def predict_captions(model, dataloader, text_field, cider, args, split):
-    import itertools
     tokenizer_pool = multiprocessing.Pool()
     res = {}
-    model.eval()
     gen = {}
     gts = {}
     with tqdm(desc='Evaluation', unit='it', total=len(dataloader)) as pbar:
@@ -64,10 +64,10 @@ if __name__ == '__main__':
     parser.add_argument('--d_model', type=int, default=512)
     parser.add_argument('--features_path', type=str, default='../coco_all_align.hdf5')
     parser.add_argument('--annotation_folder', type=str, default='./annotations')
-    parser.add_argument('--exp_name', type=str, default='DSPT')
     parser.add_argument('--dump_json', type=str, default='gen_res.json')
     parser.add_argument('--is_ensemble', action='store_true', default=False)
     parser.add_argument('--device', type=str, default='cuda:0')
+    # parser.add_argument('--input', type=str, default=None)
     parser.add_argument('--pths', nargs='+', default=['./saved_models/lab_X101_11e-8_best_test.pth', './saved_models/lab_X101_12e-8_best_test.pth'])
     args = parser.parse_args()
     device = torch.device(args.device)
@@ -101,6 +101,7 @@ if __name__ == '__main__':
     else:
         model = TransformerEnsemble(model=model, weight_files=args.pths, device=device)
 
+    # if args.input is None:
     dict_dataset_val = val_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     dict_dataset_test = test_dataset.image_dictionary({'image': image_field, 'text': RawField()})
     dict_dataloader_test = DataLoader(dict_dataset_test, batch_size=args.batch_size, num_workers=args.workers)
@@ -109,3 +110,25 @@ if __name__ == '__main__':
     print(scores)
     scores = predict_captions(model, dict_dataloader_test, text_field, cider_test, args, 'test')
     print(scores)
+    # else:
+    #     resnet101 = models.resnet152(pretrained=True).to(device)
+    #     resnet101 = torch.nn.Sequential(*list(resnet101.children())[:-2])
+    #     resnet101.eval()
+    #     preprocess = transforms.Compose([
+    #         transforms.Resize(256),
+    #         transforms.CenterCrop(224),
+    #         transforms.ToTensor(),
+    #         transforms.Normalize(
+    #             mean=[0.485, 0.456, 0.406],
+    #             std=[0.229, 0.224, 0.225]
+    #         )
+    #     ])
+    #     image = Image.open(args.input).convert('RGB')
+    #     input_batch = preprocess(image).unsqueeze(0).to(device)
+    #     with torch.no_grad():
+    #         output = resnet101(input_batch).squeeze().permute(1, 2, 0).reshape(-1, 2048).unsqueeze(0)
+    #         out, _, _ = model.beam_search(torch.rand(0), output, torch.rand(0), torch.rand(0), 20, text_field.vocab.stoi['<eos>'], 5, out_size=1)
+    #         caps_gen = text_field.decode(out, join_words=False)
+    #         caps_gen = evaluation.PTBTokenizer.tokenize(caps_gen)
+    #         caps_gen = ' '.join([k for k, g in itertools.groupby(caps_gen[0])])
+    #         print(caps_gen)

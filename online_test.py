@@ -39,12 +39,14 @@ if __name__ == '__main__':
     parser.add_argument('--d_model', type=int, default=512)
     parser.add_argument('--pth', type=str, default='./saved_models/DSPT_best_test.pth')
     parser.add_argument('--device', type=str, default='cuda:0')
+    parser.add_argument('--trainval_feature', type=str, default='/media/a1002/one/dataset/wyh/dataset/coco_all_align.hdf5')
+    parser.add_argument('--test_feature', type=str, default='../test2014.hdf5')
     args = parser.parse_args()
     device = torch.device(args.device)
 
     print('Online Test Evaluation')
-    val_dataset = OnlineDataset('/media/a1002/one/dataset/wyh/dataset/coco_all_align.hdf5', 'val')
-    test_dataset = OnlineDataset("../online_coco_test.hdf5", 'test')
+    val_dataset = OnlineDataset(args.trainval_feature, 'val')
+    test_dataset = OnlineDataset(args.test_feature, 'test')
     val_dataset.text_field.vocab = test_dataset.text_field.vocab = pickle.load(open('vocab.pkl', 'rb'))
 
     d_qkv = int(args.d_model // args.head)

@@ -237,29 +237,30 @@ def gridByTorchvision8k():
                 h5.create_dataset(str(nameToId[f][0]) + '_grids', data=output)
     h5.close()
 
-def gridByDetectron2():
+def gridByGridFeatsVQA():
+    device = torch.device("cuda:1")
     cfg = get_cfg()
     add_attribute_config(cfg)
-    cfg.merge_from_file("./grid_feats_vqa/configs/X-101-grid.yaml")
+    cfg.merge_from_file("./grid-feats-vqa/configs/X-101-grid.yaml")
     cfg.MODEL.RESNETS.RES5_DILATION = 1
     cfg.freeze()
-    model = build_model(cfg)
-    model.load_state_dict(torch.load('../X-101.pth')["model"], strict=False)
-    preprocess = transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-    ])
+    model = build_model(cfg).to(device)
+    model.load_state_dict(torch.load('../X-101.pth', map_location=device)["model"], strict=True)
+    pool = torch.nn.AdaptiveAvgPool2d((7, 7))
     h5 = h5py.File("../flicker30k.hdf5", 'w')
     with inference_context(model):
         for root, dirs, file in os.walk("../Flicker30k_Dataset/"):
             for f in tqdm(file, desc='Processing images', total=len(file)):
                 with torch.no_grad():
                     image = Image.open(os.path.join(root, f)).convert('RGB')
-                    image = [{"image":torch.from_numpy(np.array(preprocess(image))).permute(2, 0, 1)}]
+                    image = [{"image":torch.from_numpy(np.array(image)).permute(2, 0, 1).to(device)}]
                     image = model.preprocess_image(image)
                     feature = model.backbone(image.tensor)
                     output = model.roi_heads.get_conv5_features(feature)
+                    outputs = pool(outputs)
                     output = output.squeeze().permute(1, 2, 0).reshape(-1, 2048).cpu().numpy()
+                    print(output)
+                    break
                     h5.create_dataset(f.split('.')[0] + '_grids', data=output)
     h5.close()
 
