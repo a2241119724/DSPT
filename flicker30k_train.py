@@ -126,8 +126,8 @@ if __name__ == '__main__':
                         captions = captions[:, 1:].contiguous()
                         out = out[:, :-1].contiguous()
 
-                        loss = loss_fn(out.view(-1, len(vocab)), captions.view(-1), ignore_index=vocab.stoi['<pad>']) + torch.abs(
-                            torch.cosine_similarity(enc_output.unsqueeze(1),enc_output.unsqueeze(2),-1)).sum() * 1e-7
+                        loss = loss_fn(out.view(-1, len(vocab)), captions.view(-1), ignore_index=vocab.stoi['<pad>']) 
+                        + torch.abs(torch.cosine_similarity(enc_output.unsqueeze(1),enc_output.unsqueeze(2),-1)).sum() * 1e-7
 
                         loss.backward()
                         optim.step()

@@ -238,17 +238,27 @@ def gridByTorchvision8k():
     h5.close()
 
 def gridByGridFeatsVQA():
-    device = torch.device("cuda:1")
+    device = torch.device("cuda:0")
     cfg = get_cfg()
     add_attribute_config(cfg)
-    cfg.merge_from_file("./grid-feats-vqa/configs/X-101-grid.yaml")
+    # cfg.merge_from_file("./grid-feats-vqa/configs/X-101-grid.yaml")
+    cfg.merge_from_file("./grid-feats-vqa/configs/X-152-grid.yaml")
     cfg.MODEL.RESNETS.RES5_DILATION = 1
     cfg.freeze()
     model = build_model(cfg).to(device)
-    model.load_state_dict(torch.load('../X-101.pth', map_location=device)["model"], strict=True)
+    # pth = torch.load('../X-101.pth', map_location=device)["model"]
+    pth = torch.load('../X-152.pth', map_location=device)["model"]
+    for k in list(pth.keys()):
+        if "anchor_generator.cell_anchors" in k:
+            pth.pop(k)
+    model.load_state_dict(pth, strict=True)
     pool = torch.nn.AdaptiveAvgPool2d((7, 7))
-    h5 = h5py.File("../flicker30k.hdf5", 'w')
+    # h5 = h5py.File("../flicker8k_X101.hdf5", 'w')
+    # h5 = h5py.File("../flicker8k_X152.hdf5", 'w')
+    # h5 = h5py.File("../flicker30k_X101.hdf5", 'w')
+    h5 = h5py.File("../flicker30k_X152.hdf5", 'w')
     with inference_context(model):
+        # for root, dirs, file in os.walk("../Flicker8k_Dataset/"):
         for root, dirs, file in os.walk("../Flicker30k_Dataset/"):
             for f in tqdm(file, desc='Processing images', total=len(file)):
                 with torch.no_grad():
@@ -257,10 +267,8 @@ def gridByGridFeatsVQA():
                     image = model.preprocess_image(image)
                     feature = model.backbone(image.tensor)
                     output = model.roi_heads.get_conv5_features(feature)
-                    outputs = pool(outputs)
+                    output = pool(output)
                     output = output.squeeze().permute(1, 2, 0).reshape(-1, 2048).cpu().numpy()
-                    print(output)
-                    break
                     h5.create_dataset(f.split('.')[0] + '_grids', data=output)
     h5.close()
 

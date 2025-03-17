@@ -15,10 +15,7 @@ class Flickr8kDataset(Dataset):
     def __init__(self, feature_path:str, caption_path:str):
         super(Flickr8kDataset, self).__init__()
         self.f_grid = h5py.File(feature_path, 'r')
-        try:
-            self.grid_count, self.grid_dim = self.f_grid["0_grids"][()].shape
-        except:
-            self.grid_count, self.grid_dim = self.f_grid["0_features"][()].shape
+        self.grid_count, self.grid_dim = self.f_grid["0_grids"][()].shape
         self.captions = json.load(open(caption_path, 'r'))
         self.flicker8k_train_ids = np.load('./annotations/flicker8k_train_ids.npy')
         self.flicker8k_val_ids = np.load('./annotations/flicker8k_val_ids.npy')

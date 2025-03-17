@@ -103,9 +103,9 @@ class ImageField(RawField):
 
         self.f_region = h5py.File(self.feature_path, 'r')
         self.f_grid = self.f_region
-        try:
+        if("coco_all_align" in self.f_grid.filename):
             self.grid_count, self.grid_dim = self.f_grid["1000_grids"][()].shape
-        except:
+        elif("X152_trainval" in self.f_grid.filename or "swin_feature" in self.f_grid.filename):
             self.grid_count, self.grid_dim = self.f_grid["1000_features"][()].shape
         super(ImageField, self).__init__(preprocessing, postprocessing)
 

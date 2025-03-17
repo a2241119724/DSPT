@@ -41,8 +41,8 @@ def evaluate_loss(model, dataloader, loss_fn, text_field):
                 captions = captions[:, 1:].contiguous()
                 out = out[:, :-1].contiguous()
 
-                loss = loss_fn(out.view(-1, len(text_field.vocab)), captions.view(-1), ignore_index=text_field.vocab.stoi['<pad>']) 
-                + torch.abs(torch.cosine_similarity(enc_output.unsqueeze(1),enc_output.unsqueeze(2),-1)).sum() * 1e-7
+                loss = loss_fn(out.view(-1, len(text_field.vocab)), captions.view(-1), ignore_index=text_field.vocab.stoi['<pad>']) + torch.abs(
+                    torch.cosine_similarity(enc_output.unsqueeze(1),enc_output.unsqueeze(2),-1)).sum() * 1.1e-7
                 
                 this_loss = loss.item()
                 running_loss += this_loss
@@ -91,8 +91,8 @@ def train_xe(model, dataloader, optim, loss_fn, text_field):
             captions = captions[:, 1:].contiguous()
             out = out[:, :-1].contiguous()
             
-            loss = loss_fn(out.view(-1, len(text_field.vocab)), captions.view(-1), ignore_index=text_field.vocab.stoi['<pad>'])
-            + torch.abs(torch.cosine_similarity(enc_output.unsqueeze(1),enc_output.unsqueeze(2),-1)).sum() * 1e-7
+            loss = loss_fn(out.view(-1, len(text_field.vocab)), captions.view(-1), ignore_index=text_field.vocab.stoi['<pad>']) + torch.abs(
+                torch.cosine_similarity(enc_output.unsqueeze(1),enc_output.unsqueeze(2),-1)).sum() * 1.1e-7
 
             loss.backward()
             optim.step()

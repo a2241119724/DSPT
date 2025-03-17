@@ -50,7 +50,7 @@ def predict_captions(model, dataloader, text_field, cider, args, split):
     gts = evaluation.PTBTokenizer.tokenize(gts)
     gen = evaluation.PTBTokenizer.tokenize(gen)
     scores, _ = evaluation.compute_scores(gts, gen)
-    json.dump(res,open(split + args.dump_json,'w'))
+    json.dump(res,open("./output/" + split + "_" + args.dump_json,'w'))
     return scores
 
 
@@ -62,13 +62,13 @@ if __name__ == '__main__':
     parser.add_argument('--enc_N', type=int, default=6)
     parser.add_argument('--dec_N', type=int, default=6)
     parser.add_argument('--d_model', type=int, default=512)
-    parser.add_argument('--features_path', type=str, default='../coco_all_align.hdf5')
+    parser.add_argument('--features_path', type=str, default='../../../one/dataset/wyh/dataset/coco_all_align.hdf5')
     parser.add_argument('--annotation_folder', type=str, default='./annotations')
     parser.add_argument('--dump_json', type=str, default='gen_res.json')
     parser.add_argument('--is_ensemble', action='store_true', default=False)
     parser.add_argument('--device', type=str, default='cuda:0')
     # parser.add_argument('--input', type=str, default=None)
-    parser.add_argument('--pths', nargs='+', default=['./saved_models/lab_X101_11e-8_best_test.pth', './saved_models/lab_X101_12e-8_best_test.pth'])
+    parser.add_argument('--pths', nargs='+', default=['./saved_models/X101_best_test.pth', './saved_models/lab_X101_12e-8_best_test.pth'])
     args = parser.parse_args()
     device = torch.device(args.device)
     print('Test Evaluation')

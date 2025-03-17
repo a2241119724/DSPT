@@ -10,7 +10,7 @@ from data.onlineDataset import OnlineDataset, OnlineDataLoader
 
 def predict_captions(model, dataloader, text_field, dump_json):
     import itertools
-    res = []
+    _res = {}
     model.eval()
     with tqdm(desc='Evaluation', unit='it', total=len(dataloader)) as pbar:
         for it, (grids, ids) in enumerate(iter(dataloader)):
@@ -21,17 +21,20 @@ def predict_captions(model, dataloader, text_field, dump_json):
             caps_gen = evaluation.PTBTokenizer.tokenize(caps_gen)
             for i, gen in caps_gen.items():
                 gen = ' '.join([k for k, g in itertools.groupby(gen)])
-                res.append({
-                    "image_id": int(ids[i]),
-                    'caption':gen,
-                })
+                _res[int(ids[i])] = gen.strip()
             pbar.update()
+    res = []
+    for k, v in _res.items():
+        res.append({
+            "image_id": k,
+            'caption': v
+        })
     json.dump(res,open(dump_json,'w'))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='DSPT')
-    parser.add_argument('--batch_size', type=int, default=10)
+    parser.add_argument('--batch_size', type=int, default=50)
     parser.add_argument('--workers', type=int, default=8)
     parser.add_argument('--head', type=int, default=4)
     parser.add_argument('--enc_N', type=int, default=6)
@@ -58,5 +61,5 @@ if __name__ == '__main__':
 
     val_dataloader = OnlineDataLoader(val_dataset, batch_size=args.batch_size, num_workers=args.workers)
     test_dataloader = OnlineDataLoader(test_dataset, batch_size=args.batch_size, num_workers=args.workers)
-    predict_captions(model, val_dataloader, val_dataset.text_field, "./captions_val2014_DSPT_results.json")
-    predict_captions(model, test_dataloader, test_dataset.text_field, "./captions_test2014_DSPT_results.json")
+    predict_captions(model, val_dataloader, val_dataset.text_field, "./output/_captions_val2014_DSPT_results.json")
+    predict_captions(model, test_dataloader, test_dataset.text_field, "./output/_captions_test2014_DSPT_results.json")
