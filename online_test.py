@@ -4,7 +4,7 @@ import argparse
 import json
 import pickle
  
-from models.transformer import Transformer, Encoder, Decoder
+from models.transformer import Transformer, Encoder, Decoder, TransformerEnsemble
 from tqdm import tqdm
 from data.onlineDataset import OnlineDataset, OnlineDataLoader
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     parser.add_argument('--enc_N', type=int, default=6)
     parser.add_argument('--dec_N', type=int, default=6)
     parser.add_argument('--d_model', type=int, default=512)
-    parser.add_argument('--pth', type=str, default='./saved_models/DSPT_best_test.pth')
+    parser.add_argument('--pths', nargs='+', default=['./saved_models/DSPT_X101.pth', './saved_models/lab_X101_12e-8_best_test.pth'])
     parser.add_argument('--device', type=str, default='cuda:0')
     parser.add_argument('--trainval_feature', type=str, default='/media/a1002/one/dataset/wyh/dataset/coco_all_align.hdf5')
     parser.add_argument('--test_feature', type=str, default='../test2014.hdf5')
@@ -56,8 +56,8 @@ if __name__ == '__main__':
     encoder = Encoder(args.enc_N, d_k=d_qkv, d_v=d_qkv, h=args.head, d_in=val_dataset.grid_dim, d_model=args.d_model, grid_count=val_dataset.grid_count)
     decoder = Decoder(len(val_dataset.text_field.vocab), 54, args.dec_N, val_dataset.text_field.vocab.stoi['<pad>'], d_k=d_qkv, d_v=d_qkv, h=args.head, d_model=args.d_model)
     model = Transformer(val_dataset.text_field.vocab.stoi['<bos>'], encoder, decoder).to(device)
-    data = torch.load(args.pth, map_location=device)
-    model.load_state_dict(data['state_dict'])
+    model.eval()
+    model = TransformerEnsemble(model=model, weight_files=args.pths, device=device)
 
     val_dataloader = OnlineDataLoader(val_dataset, batch_size=args.batch_size, num_workers=args.workers)
     test_dataloader = OnlineDataLoader(test_dataset, batch_size=args.batch_size, num_workers=args.workers)

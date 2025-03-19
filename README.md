@@ -55,12 +55,12 @@ python test.py --is_ensemble --features_path ../coco_all_align.hdf5 --pths ./sav
 
 #### **Evaluation of some indicators**
 ``` sh
-python eval.py
+python eval.py --features_path ../coco_all_align.hdf5
 ```
 
 #### **Online Test**
 ``` sh
-python online_test.py --device cuda:0 --pth ./saved_models/DSPT_X101_best_test.pth --trainval_feature ../coco_all_align.hdf5 --test_feature ../test2014.hdf5
+python online_test.py --device cuda:0 --trainval_feature ../coco_all_align.hdf5 --test_feature ../test2014.hdf5 --pths ./saved_models/DSPT_1_best_test.pth ./saved_models/DSPT_2_best_test.pth ./saved_models/DSPT_3_best_test.pth ./saved_models/DSPT_4_best_test.pth
 ```
 
 ## Acknowledgements

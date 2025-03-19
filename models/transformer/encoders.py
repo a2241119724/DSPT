@@ -1,12 +1,13 @@
 from models.transformer.utils import PositionWiseFeedForward
 from torch import nn
-from models.transformer.attention import MultiHeadAttention_encoder
+from models.transformer.attention import MultiHeadAttention_encoder, MultiHeadAttention
 
 class EncoderFusion(nn.Module):
     def __init__(self, N, d_model=512, d_k=128, d_v=128, h=4, d_ff=2048, grid_count=49, dropout=.1):
         super(EncoderFusion, self).__init__()
         self.N = N
 
+        # self.mhatt = nn.ModuleList([MultiHeadAttention(d_model, d_k, d_v, h, grid_count, dropout) for _ in range(N)])
         self.mhatt = nn.ModuleList([MultiHeadAttention_encoder(d_model, d_k, d_v, h, grid_count, dropout) for _ in range(N)])
         self.pwff = nn.ModuleList([PositionWiseFeedForward(d_model, d_ff, dropout) for _ in range(N)])
         self.ln = nn.ModuleList([nn.LayerNorm(d_model) for _ in range(N)])
