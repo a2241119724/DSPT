@@ -101,6 +101,7 @@ class ImageField(RawField):
             else:
                 self.feature_path = tmp_detections_path
 
+        self.id2Caption = False
         self.f_region = h5py.File(self.feature_path, 'r')
         self.f_grid = self.f_region
         if("coco_all_align" in self.f_grid.filename):
@@ -134,7 +135,10 @@ class ImageField(RawField):
         elif delta < 0:
             boxes = boxes[:self.max_detections]
 
-        return regions.astype(np.float32), grids.astype(np.float32), boxes.astype(np.float32), sizes.astype(np.float32)
+        if self.id2Caption:
+            return regions.astype(np.float32), grids.astype(np.float32), boxes.astype(np.float32), sizes.astype(np.float32), image_id
+        else:
+            return regions.astype(np.float32), grids.astype(np.float32), boxes.astype(np.float32), sizes.astype(np.float32)
 
 
 class TextField(RawField):

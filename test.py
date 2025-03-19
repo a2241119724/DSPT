@@ -22,7 +22,7 @@ def predict_captions(model, dataloader, text_field, cider, args, split):
     gen = {}
     gts = {}
     with tqdm(desc='Evaluation', unit='it', total=len(dataloader)) as pbar:
-        for it, ((regions, grids, boxes, sizes), caps_gt) in enumerate(iter(dataloader)):
+        for it, ((regions, grids, boxes, sizes, ids), caps_gt) in enumerate(iter(dataloader)):
             regions, grids, boxes, sizes = regions.to(device), grids.to(device), boxes.to(device), sizes.to(device)
             with torch.no_grad():
                 out, _, _ = model.beam_search(torch.rand(0), grids, torch.rand(0), torch.rand(0), 20, text_field.vocab.stoi['<eos>'], 5, out_size=1)
@@ -32,10 +32,9 @@ def predict_captions(model, dataloader, text_field, cider, args, split):
 
             caps_gen1, caps_gt1 = tokenizer_pool.map(evaluation.PTBTokenizer.tokenize, [caps_gen1, caps_gt1])
             reward = cider.compute_score(caps_gt1, caps_gen1)[1].astype(np.float32)
-            # reward = reward.mean().item()
 
             for i,(gts_i, gen_i) in enumerate(zip(caps_gt1,caps_gen1)):
-                res[len(res)] = {
+                res[ids[i].item()] = {
                     'gt':caps_gt1[gts_i],
                     'gen':caps_gen1[gen_i],
                     'cider':reward[i].item(),
@@ -68,13 +67,14 @@ if __name__ == '__main__':
     parser.add_argument('--is_ensemble', action='store_true', default=False)
     parser.add_argument('--device', type=str, default='cuda:0')
     # parser.add_argument('--input', type=str, default=None)
-    parser.add_argument('--pths', nargs='+', default=['./saved_models/X101_best_test.pth', './saved_models/lab_X101_12e-8_best_test.pth'])
+    parser.add_argument('--pths', nargs='+', default=['./saved_models/DSPT_X101.pth', './saved_models/lab_X101_12e-8_best_test.pth'])
     args = parser.parse_args()
     device = torch.device(args.device)
     print('Test Evaluation')
 
     # Pipeline for image regions
     image_field = ImageField(feature_path=args.features_path, max_detections=0, load_in_tmp=False)
+    image_field.id2Caption = True
 
     # Pipeline for text
     text_field = TextField(init_token='<bos>', eos_token='<eos>', lower=True, tokenize='spacy',
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     scores = predict_captions(model, dict_dataloader_test, text_field, cider_test, args, 'test')
     print(scores)
     # else:
-    #     resnet101 = models.resnet152(pretrained=True).to(device)
+    #     resnet101 = models.resnet101(pretrained=True).to(device)
     #     resnet101 = torch.nn.Sequential(*list(resnet101.children())[:-2])
     #     resnet101.eval()
     #     preprocess = transforms.Compose([

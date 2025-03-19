@@ -7,6 +7,5 @@
 **/__pycache__/
 *.pkl
 *.zip
-online_utils.py
 _train.py
 _test.py
