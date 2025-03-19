@@ -101,7 +101,7 @@ class ImageField(RawField):
             else:
                 self.feature_path = tmp_detections_path
 
-        self.id2Caption = False
+        self.id2Image = False
         self.f_region = h5py.File(self.feature_path, 'r')
         self.f_grid = self.f_region
         if("coco_all_align" in self.f_grid.filename):
@@ -109,6 +109,9 @@ class ImageField(RawField):
         elif("X152_trainval" in self.f_grid.filename or "swin_feature" in self.f_grid.filename):
             self.grid_count, self.grid_dim = self.f_grid["1000_features"][()].shape
         super(ImageField, self).__init__(preprocessing, postprocessing)
+
+    def getById(self, id):
+        return torch.tensor(self.f_grid['%d_grids' % id][()])
 
     def preprocess(self, x, avoid_precomp=False):
         image_id = int(x.split('_')[-1].split('.')[0])
@@ -135,7 +138,7 @@ class ImageField(RawField):
         elif delta < 0:
             boxes = boxes[:self.max_detections]
 
-        if self.id2Caption:
+        if self.id2Image:
             return regions.astype(np.float32), grids.astype(np.float32), boxes.astype(np.float32), sizes.astype(np.float32), image_id
         else:
             return regions.astype(np.float32), grids.astype(np.float32), boxes.astype(np.float32), sizes.astype(np.float32)

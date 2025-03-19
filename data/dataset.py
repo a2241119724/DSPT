@@ -148,6 +148,13 @@ class PairedDataset(Dataset):
         super(PairedDataset, self).__init__(examples, fields)
         self.image_field = self.fields['image']
         self.text_field = self.fields['text']
+        self.id2Caption = {}
+        for example in self.examples:
+            image_id = int(getattr(example,"image").split('_')[-1].split('.')[0])
+            if image_id in self.id2Caption:
+                self.id2Caption[image_id].append(getattr(example,"text"))
+            else:
+                self.id2Caption[image_id] = [getattr(example,"text")]
 
     def image_set(self):
         img_list = [e.image for e in self.examples]
