@@ -29,12 +29,14 @@ if __name__ == "__main__":
     encoder = Encoder(6, d_k=128, d_v=128, h=4, d_in=2048, d_model=512)
     decoder = Decoder(len(text_field.vocab), 54, 6, text_field.vocab.stoi['<pad>'], d_k=128, d_v=128, h=4, d_model=512)
     model = Transformer(text_field.vocab.stoi['<bos>'], encoder, decoder)
-    mean = 0
+    total = 0
     with tqdm(desc='Eval: ', unit='it', total=100) as pbar:
         for it, (regions, grids, boxes, sizes, captions) in enumerate(dataloader_train):
-            flops, params = profile(model, inputs=(torch.rand(0), grids, torch.rand(0), torch.rand(0), captions))
-            mean = mean + flops/1000**3
-            pbar.update()
+            if it < 10:
+                continue
             if it == 100: break
-    print('FLOPs = ' + str(mean/100) + 'G')
+            flops, params = profile(model, inputs=(torch.rand(0), grids, torch.rand(0), torch.rand(0), captions))
+            total = total + flops/1000**3
+            pbar.update()
+    print('FLOPs = ' + str(total/90) + 'G')
     print('Params = ' + str(params/1000**2) + 'M')
