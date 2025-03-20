@@ -67,7 +67,7 @@ if __name__ == '__main__':
     parser.add_argument('--dump_json', type=str, default='gen_res.json')
     parser.add_argument('--is_ensemble', action='store_true', default=False)
     parser.add_argument('--device', type=str, default='cuda:0')
-    parser.add_argument('--input_id', type=int, default=26942)
+    parser.add_argument('--input_id', type=int, default=-1)
     parser.add_argument('--pths', nargs='+', default=['./saved_models/DSPT_X101.pth', './saved_models/lab_X101_12e-8_best_test.pth'])
     args = parser.parse_args()
     device = torch.device(args.device)
