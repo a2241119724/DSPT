@@ -33,6 +33,7 @@ if __name__ == "__main__":
     with tqdm(desc='Eval: ', unit='it', total=100) as pbar:
         for it, (regions, grids, boxes, sizes, captions) in enumerate(dataloader_train):
             if it < 10:
+                pbar.update()
                 continue
             if it == 100: break
             flops, params = profile(model, inputs=(torch.rand(0), grids, torch.rand(0), torch.rand(0), captions))
