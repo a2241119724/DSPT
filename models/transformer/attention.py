@@ -24,7 +24,6 @@ class ScaledDotProductAttention_encoder(nn.Module):
         self.fc_o = nn.Linear(h * d_v, d_model)
         self.dropout = nn.Dropout(dropout)
         self.scale = nn.Parameter(torch.ones((1,h,grid_count,grid_count)) * (1. / np.sqrt(d_k)))
-        # self.isVisual = False
 
     def forward(self, queries, keys, values, attention_mask=None, attention_weights=None):
         b_s, nq = queries.shape[:2]

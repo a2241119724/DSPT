@@ -3,7 +3,7 @@ from torch import nn
 from models.transformer.attention import MultiHeadAttention_encoder, MultiHeadAttention
 
 class EncoderFusion(nn.Module):
-    def __init__(self, N, d_model=512, d_k=128, d_v=128, h=4, d_ff=2048, grid_count=49, dropout=.1):
+    def __init__(self, N:int, d_model:int=512, d_k:int=128, d_v:int=128, h:int=4, d_ff:int=2048, grid_count:int=49, dropout:float=.1):
         super(EncoderFusion, self).__init__()
         self.N = N
 
@@ -21,7 +21,7 @@ class EncoderFusion(nn.Module):
         return grids
 
 class MultiLevelEncoder(nn.Module):
-    def __init__(self, N, d_model=512, d_k=128, d_v=128, h=4, d_ff=2048, grid_count=49, dropout=.1, attention_module=None, attention_module_kwargs=None):
+    def __init__(self, N:int, d_model:int=512, d_k:int=128, d_v:int=128, h:int=4, d_ff:int=2048, grid_count:int=49, dropout:float=.1, attention_module=None, attention_module_kwargs=None):
         super(MultiLevelEncoder, self).__init__()
         self.d_model = d_model
         self.dropout = dropout
