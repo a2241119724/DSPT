@@ -113,7 +113,7 @@ if __name__ == '__main__':
         scores = predict_captions(model, dict_dataloader_test, text_field, cider_test, args, 'test')
         print(scores)
     else:
-        ScaledDotProductAttention_encoder.isVisual = True
+        # ScaledDotProductAttention_encoder.isVisual = True
         # encoder.encoderFusion.mhatt[0].attention.isVisual = True
         grids = image_field.getById(args.input_id).unsqueeze(0).to(device)
         caps_gt = test_dataset.id2Caption[args.input_id]
