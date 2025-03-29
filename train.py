@@ -110,7 +110,6 @@ def train_xe(model, dataloader, optim, loss_fn, text_field):
 def train_scst(model, dataloader, optim, cider, text_field):
     # Training with self-critical
     tokenizer_pool = multiprocessing.Pool()
-    running_reward = .0
     running_reward_baseline = .0
     model.train()
     scheduler.step()
@@ -140,16 +139,13 @@ def train_scst(model, dataloader, optim, cider, text_field):
             optim.step()
 
             running_loss += loss.item()
-            running_reward += reward.mean().item()
             running_reward_baseline += reward_baseline.mean().item()
-            pbar.set_postfix(loss=running_loss / (it + 1), reward=running_reward / (it + 1),
-                reward_baseline=running_reward_baseline / (it + 1))
+            pbar.set_postfix(loss=running_loss / (it + 1), reward_baseline=running_reward_baseline / (it + 1))
             pbar.update()
 
     loss = running_loss / len(dataloader)
-    reward = running_reward / len(dataloader)
     reward_baseline = running_reward_baseline / len(dataloader)
-    return loss, reward, reward_baseline
+    return loss, reward_baseline
 
 
 if __name__ == '__main__':
@@ -276,10 +272,8 @@ if __name__ == '__main__':
             train_loss = train_xe(model, dataloader_train, optim, loss_fn, text_field)
             writer.add_scalar('data/train_loss', train_loss, e)
         else:
-            train_loss, reward, reward_baseline = train_scst(model, dict_dataloader_train, optim, cider_train,
-                text_field)
+            train_loss, reward_baseline = train_scst(model, dict_dataloader_train, optim, cider_train, text_field)
             writer.add_scalar('data/train_loss', train_loss, e)
-            writer.add_scalar('data/reward', reward, e)
             writer.add_scalar('data/reward_baseline', reward_baseline, e)
 
         # Validation loss
