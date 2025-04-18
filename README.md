@@ -61,6 +61,7 @@ python eval.py --features_path ../coco_all_align.hdf5
 ``` sh
 python online_test.py --device cuda:0 --trainval_feature ../coco_all_align.hdf5 --test_feature ../test2014.hdf5 --pths ./saved_models/DSPT_1_best_test.pth ./saved_models/DSPT_2_best_test.pth ./saved_models/DSPT_3_best_test.pth ./saved_models/DSPT_4_best_test.pth
 ```
+The result is generated under **./output**, and you can submit this evaluation result to the ![server](The result is generated under output, and you can submit it to this evaluation result)
 
 ## Acknowledgements
 Thanks Cornia et.al [M2 transformer](https://github.com/CorniaAI/M2Transformer)
