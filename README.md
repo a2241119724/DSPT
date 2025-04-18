@@ -33,7 +33,7 @@ python flicker30k_train.py --exp_name flicker30k --features_path ../flicker30k.h
 If it shows "out of graphics memory" after running, reduce the batch_size and rl_batch_size.
 
 ## Evaluation
-To reproduce the results reported in our paper, download the pretrained model file [DSPT_X101.pth]() [DSPT_X152.pth](https://pan.baidu.com/s/1Xin98dpSZRGknMfxmRUcOw) [DSPT_Swin.pth](https://pan.baidu.com/s/1p-Va8cGR0L4DY_U8peSZGg). Acess code: labl. Evaluation a model using the **MSCOCO** dataset. Run the following command:
+To reproduce the results reported in our paper, download the pretrained model file [DSPT_X101.pth](https://pan.baidu.com/s/16n7bi8hlVJaSKYuk7OK3Uw) [DSPT_X152.pth](https://pan.baidu.com/s/1Xin98dpSZRGknMfxmRUcOw) [DSPT_Swin.pth](https://pan.baidu.com/s/1p-Va8cGR0L4DY_U8peSZGg). Acess code: labl. Evaluation a model using the **MSCOCO** dataset. Run the following command:
 ``` sh
 python test.py --features_path ../coco_all_align.hdf5 --device cuda:0 --pths DSPT_best_test.pth
 ```
