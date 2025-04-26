@@ -12,7 +12,7 @@ sh environment.sh
 ## Data
 To run the code, annotations, evaluation tools and visual features for the COCO dataset are needed.
 - **Annotation**. Download the annotation file [annotations.zip](https://pan.baidu.com/s/1KCGlotCKlZF0FrDB995IzA). Acess code: labl. Extarct and put it in the project root directory.
-- **Feature**. The grid features extracted using X101 and X152 as baselines on the MSCOCO dataset can be downloaded from [grid-feats-vqa](https://github.com/facebookresearch/grid-feats-vqa). For the X101 we use, you can download its processed version from [DLCT](https://github.com/luo3300612/image-captioning-DLCT). For the X152 we use, you can download its processed version from [RSTNet](https://github.com/zhangxuying1004/RSTNet). And you can download other feature from [hdf5](https://pan.baidu.com/s/1Au97sw12o7UdrEZN_QRzBg). Acess code: labl.
+- **Feature**. The grid features extracted using X101 and X152 as baselines on the MSCOCO dataset can be downloaded from [grid-feats-vqa](https://github.com/facebookresearch/grid-feats-vqa). For the X101 we use, you can download its processed version from [DLCT](https://github.com/luo3300612/image-captioning-DLCT). For the X152 we use, you can download its processed version from [RSTNet](https://github.com/zhangxuying1004/RSTNet).
 - **Evaluation**. [evaluation.zip](https://pan.baidu.com/s/1rAYvKcQOGkYoUPrTpY2qUQ). Acess code: labl. Extarct and put it in the project root directory.
 
 Preprocessing of the Flicker Dataset in the **flicker_utils.py** File.
