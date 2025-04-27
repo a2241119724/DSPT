@@ -61,5 +61,5 @@ if __name__ == '__main__':
 
     val_dataloader = OnlineDataLoader(val_dataset, batch_size=args.batch_size, num_workers=args.workers)
     test_dataloader = OnlineDataLoader(test_dataset, batch_size=args.batch_size, num_workers=args.workers)
-    predict_captions(model, val_dataloader, val_dataset.text_field, "./output/_captions_val2014_DSPT_results.json")
-    predict_captions(model, test_dataloader, test_dataset.text_field, "./output/_captions_test2014_DSPT_results.json")
+    predict_captions(model, val_dataloader, val_dataset.text_field, "./output/captions_val2014_DSPT_results.json")
+    predict_captions(model, test_dataloader, test_dataset.text_field, "./output/captions_test2014_DSPT_results.json")
