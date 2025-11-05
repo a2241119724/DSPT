@@ -1,4 +1,4 @@
-# Dual-Stage Pixel Transformer with Enhanced Visual Context for Image Captioning
+# [Dual-Stage Pixel Transformer with Enhanced Visual Context for Image Captioning](https://link.springer.com/article/10.1007/s00530-025-01965-5)
 | DSPA | Arch | EVCA |
 |:---:|:---:|:---:|
 |![encoder](./images/encoder.png)|![architecture](./images/architecture.png)|![decoder](./images/decoder.png)|
